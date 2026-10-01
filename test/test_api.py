@@ -1,11 +1,9 @@
-import sys
-import requests
+import pytest
+from fastapi.testclient import TestClient
+from src.api import app
 
-# Set endpoint bases based on where your app is running
-LOCAL_URL = "http://localhost:8000"
-DOCKER_URL = "http://localhost:8000"  # Adjust host/port if Docker uses a different port (e.g. http://localhost:8080)
+client = TestClient(app)
 
-# Sample transaction payload matching the Pydantic schema
 SAMPLE_PAYLOAD = {
     "Time": 0.0,
     "V1": -1.3598071336738,
@@ -39,51 +37,14 @@ SAMPLE_PAYLOAD = {
     "Amount": 149.62
 }
 
+def test_health_check():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
 
-def test_api(base_url: str, label: str):
-    print(f"\n==========================================")
-    print(f" Testing API Target: [{label}] at {base_url}")
-    print(f"==========================================")
-
-    # 1. Test Health Endpoint
-    try:
-        response = requests.get(f"{base_url}/health", timeout=5)
-        print(f"\n[GET /health]")
-        print(f"  Status Code : {response.status_code}")
-        print(f"  Response    : {response.json()}")
-    except requests.exceptions.RequestException as e:
-        print(f"\n❌ Failed to connect to {base_url}/health")
-        print(f"  Error: {e}")
-        return False
-
-    # 2. Test Single Prediction Endpoint
-    try:
-        response = requests.post(f"{base_url}/predict", json=SAMPLE_PAYLOAD, timeout=5)
-        print(f"\n[POST /predict]")
-        print(f"  Status Code : {response.status_code}")
-        print(f"  Response    : {response.json()}")
-    except requests.exceptions.RequestException as e:
-        print(f"\n❌ Failed to connect to {base_url}/predict")
-        print(f"  Error: {e}")
-
-    # 3. Test Batch Prediction Endpoint
-    try:
-        batch_payload = [SAMPLE_PAYLOAD, SAMPLE_PAYLOAD]
-        response = requests.post(f"{base_url}/predict_batch", json=batch_payload, timeout=5)
-        print(f"\n[POST /predict_batch]")
-        print(f"  Status Code : {response.status_code}")
-        print(f"  Response    : {response.json()}")
-    except requests.exceptions.RequestException as e:
-        print(f"\n❌ Failed to connect to {base_url}/predict_batch")
-        print(f"  Error: {e}")
-
-
-if __name__ == "__main__":
-    # Determine target from command line args if provided, else test local by default
-    # Usage: python test_api.py [local|docker]
-    target = sys.argv[1].lower() if len(sys.argv) > 1 else "local"
-
-    if target == "docker":
-        test_api(DOCKER_URL, "Docker Container")
-    else:
-        test_api(LOCAL_URL, "Local Server")
+def test_predict():
+    response = client.post("/predict", json=SAMPLE_PAYLOAD)
+    assert response.status_code == 200
+    data = response.json()
+    assert "prediction" in data
+    assert "probability" in data
