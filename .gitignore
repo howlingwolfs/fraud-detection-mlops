@@ -12,7 +12,7 @@ venv/
 env/
 
 # Data & Heavy Binaries
-creditcard.csv
+# creditcard.csv
 *.joblib
 
 # OS Files
