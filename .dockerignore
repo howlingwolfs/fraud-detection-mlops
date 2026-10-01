@@ -1,1 +1,51 @@
-﻿__pycache__/
+﻿# .dockerignore
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual‑env folders (you may have either venv/ or env/)
+venv/
+env/
+
+# IDE / editor metadata
+*.swp
+*.swo
+*.tmp
+.idea/
+.vscode/
+*.pyc
+
+# Testing / CI artefacts
+.pytest_cache/
+*.log
+*.coverage
+cover/
+
+# Local environment & secrets
+.env
+*.env
+*.secret
+
+# Data & heavy binaries – they’re already in the repo but you probably don’t want to
+# re‑copy them unless you need them at build time.
+data/
+*.csv
+*.joblib
+
+# Git metadata
+.git/
+.gitignore
+.gitmodules
+.gitkeep
+
+# OS / Misc
+.DS_Store
+Thumbs.db
+
+# Docker‑specific helpers
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile

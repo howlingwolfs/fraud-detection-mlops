@@ -1,3 +1,8 @@
+# Remove the incorrect file if it exists
+Remove-Item -Path .\dockeringnore -ErrorAction SilentlyContinue
+
+# Write a fresh .gitignore
+@'
 # Python
 __pycache__/
 *.py[cod]
@@ -12,3 +17,7 @@ creditcard.csv
 
 # OS Files
 .DS_Store
+
+# Docker ignore
+.dockerignore
+'@ | Out-File -FilePath .gitignore -Encoding utf8
