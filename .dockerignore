@@ -32,8 +32,8 @@ cover/
 # Data & heavy binaries – they’re already in the repo but you probably don’t want to
 # re‑copy them unless you need them at build time.
 data/
-*.csv
-# *.joblib
+# *.csv
+*.joblib
 
 # Git metadata
 .git/
