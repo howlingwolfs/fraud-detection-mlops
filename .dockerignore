@@ -33,7 +33,7 @@ cover/
 # re‑copy them unless you need them at build time.
 data/
 *.csv
-*.joblib
+# *.joblib
 
 # Git metadata
 .git/
