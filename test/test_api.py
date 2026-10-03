@@ -2,8 +2,6 @@ import pytest
 from fastapi.testclient import TestClient
 from src.api import app
 
-client = TestClient(app)
-
 SAMPLE_PAYLOAD = {
     "Time": 0.0,
     "V1": -1.3598071336738,
@@ -38,13 +36,15 @@ SAMPLE_PAYLOAD = {
 }
 
 def test_health_check():
-    response = client.get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    with TestClient(app) as client:
+        response = client.get("/health")
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok"}
 
 def test_predict():
-    response = client.post("/predict", json=SAMPLE_PAYLOAD)
-    assert response.status_code == 200
-    data = response.json()
-    assert "prediction" in data
-    assert "probability" in data
+    with TestClient(app) as client:
+        response = client.post("/predict", json=SAMPLE_PAYLOAD)
+        assert response.status_code == 200
+        data = response.json()
+        assert "prediction" in data
+        assert "probability" in data

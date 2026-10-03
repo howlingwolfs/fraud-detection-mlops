@@ -160,7 +160,7 @@ async def predict(transaction: Transaction) -> dict:
     Predict whether the given transaction is fraudulent.
     """
     try:
-        df = pd.DataFrame([transaction.dict()])[FEATURE_NAMES]
+        df = pd.DataFrame([transaction.model_dump()])[FEATURE_NAMES]
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
@@ -181,7 +181,7 @@ async def predict_batch(transactions: List[Transaction]) -> List[dict]:
     Batch prediction – accepts a list of transactions and returns a list
     of predictions in the same order.
     """
-    df = pd.DataFrame([t.dict() for t in transactions])[FEATURE_NAMES]
+    df = pd.DataFrame([t.model_dump() for t in transactions])[FEATURE_NAMES]
     preds = model.predict(df).astype(int).tolist()
     probs = model.predict_proba(df)[:, 1].tolist()
     return [{"prediction": int(p), "probability": float(q)} for p, q in zip(preds, probs)]
